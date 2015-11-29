@@ -77,10 +77,10 @@ User.findOne({where: {username:req.body.username}})
             password: req.body.password,
             followers: 0,
             following: 0
-        }).then(function(){
+        }).then(function(t_user){
             req.logIn(t_user,function(err){
             if (err) return next(err);
-            res.redirect('/');
+            return res.redirect('/profile/'+t_user.username);
             });
           });
       }
@@ -91,6 +91,7 @@ User.findOne({where: {username:req.body.username}})
 /*** GET PROFILE ***/
 exports.getUser = function(req, res) {
   // If no username is specified, go to the logged in user's profile
+  console.log(req.user);
   if (!req.params.username) {
     req.params.username = req.user.username;
   }
@@ -100,6 +101,7 @@ exports.getUser = function(req, res) {
       // Check to see if a user with the specified username exists
       if (!user) {
         req.flash('errors', { msg: 'User with that username does not exist.' });
+        console.log("Still weird");
         return res.redirect('/');
       }
       else{
@@ -122,6 +124,7 @@ exports.addFollower = function(req,res){
       // Check to see if a user with the specified username exists
       if (!user) {
         req.flash('errors', { msg: 'User with that username does not exist.' });
+        console.log("weird stuff");
         return res.redirect('/');
       }
       else{
@@ -150,6 +153,7 @@ exports.addFollower = function(req,res){
                     res.sendStatus(400);
                   }
                   else{
+                    console.log("render in follow");
                   res.render('pages/profile', { currentuser: req.user.username, username: user.username, followers: user.followers, following: user.following, index: false, profile: true});
                    client.end();
                  }
